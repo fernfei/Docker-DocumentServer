@@ -83,16 +83,16 @@ ENV COMPANY_NAME=$COMPANY_NAME \
     PRODUCT_EDITION=$PRODUCT_EDITION \
     DS_DOCKER_INSTALLATION=true
 
-RUN PACKAGE_FILE="${COMPANY_NAME}-${PRODUCT_NAME}${PRODUCT_EDITION}${PACKAGE_VERSION:+_$PACKAGE_VERSION}_${TARGETARCH:-$(dpkg --print-architecture)}.deb" && \
+RUN    wget -q -P /tmp "https://github.com/thomisus/server/releases/download/${OOU_VERSION_MAJOR}.${OOU_BUILD}/onlyoffice-documentserver_${OOU_VERSION_MAJOR}-${OOU_BUILD}.oou_amd64.deb" && \
     apt-get -y update && \
     service postgresql start && \
-    apt-get -yq install /tmp/$PACKAGE_FILE && \
+    apt-get -yq install /tmp/onlyoffice-documentserver_7.5.1-36.bs_amd64.deb && \
     service postgresql stop && \
     chmod 755 /etc/init.d/supervisor && \
     sed "s/COMPANY_NAME/${COMPANY_NAME}/g" -i /etc/supervisor/conf.d/*.conf && \
     service supervisor stop && \
     chmod 755 /app/ds/*.sh && \
-    rm -f /tmp/$PACKAGE_FILE && \
+    rm -f /tmp/onlyoffice-documentserver_7.5.1-36.bs_amd64.deb && \
     rm -rf /var/log/$COMPANY_NAME && \
     rm -rf /var/lib/apt/lists/*
 

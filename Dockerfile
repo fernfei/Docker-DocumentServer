@@ -76,23 +76,35 @@ ARG PRODUCT_NAME=documentserver
 ARG PRODUCT_EDITION=
 ARG PACKAGE_VERSION=
 ARG TARGETARCH
-ARG PACKAGE_BASEURL="https://github.com/fernfei/DocumentServer/releases/download/v7.5.1_bs/onlyoffice-documentserver_7.5.1-36.bs_amd64.deb"
+ARG PACKAGE_BASEURL="http://image.hi-hufei.com/onlyoffice-documentserver_7.5.1-1_amd64.deb"
 
 ENV COMPANY_NAME=$COMPANY_NAME \
     PRODUCT_NAME=$PRODUCT_NAME \
     PRODUCT_EDITION=$PRODUCT_EDITION \
     DS_DOCKER_INSTALLATION=true
 
-RUN    wget -q -P /tmp "https://github.com/fernfei/DocumentServer/releases/download/v7.5.1_bs/onlyoffice-documentserver_7.5.1-36.bs_amd64.deb" && \
+
+
+RUN apt-get update && \
+    apt-get install -y git zip && \
+    curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && \
+    apt-get install -y git-lfs && \
+    git lfs install && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN    wget -q -P /tmp "http://image.hi-hufei.com/onlyoffice-documentserver_7.5.1-1_amd64.deb" && \
+       git clone "https://github.com/fernfei/DocumentServer-Fonts.git" /DocumentServer-Fonts && \
+       unzip /DocumentServer-Fonts/fonts.zip -d /usr/share/fonts/ && \
     apt-get -y update && \
     service postgresql start && \
-    apt-get -yq install /tmp/onlyoffice-documentserver_7.5.1-36.bs_amd64.deb && \
+    apt-get -yq install /tmp/onlyoffice-documentserver_7.5.1-1_amd64.deb && \
     service postgresql stop && \
     chmod 755 /etc/init.d/supervisor && \
     sed "s/COMPANY_NAME/${COMPANY_NAME}/g" -i /etc/supervisor/conf.d/*.conf && \
     service supervisor stop && \
     chmod 755 /app/ds/*.sh && \
-    rm -f /tmp/onlyoffice-documentserver_7.5.1-36.bs_amd64.deb && \
+    rm -rf /DocumentServer-Fonts && \
+    rm -f /tmp/onlyoffice-documentserver_7.5.1-1_amd64.deb && \
     rm -rf /var/log/$COMPANY_NAME && \
     rm -rf /var/lib/apt/lists/*
 

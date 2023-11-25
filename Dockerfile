@@ -74,9 +74,10 @@ EXPOSE 80 443
 ARG COMPANY_NAME=onlyoffice
 ARG PRODUCT_NAME=documentserver
 ARG PRODUCT_EDITION=
-ARG PACKAGE_VERSION=
+ARG PACKAGE_VERSION=7.5.1
+ARG PACKAGE_REVISION=4
 ARG TARGETARCH
-ARG PACKAGE_BASEURL="http://image.hi-hufei.com/onlyoffice-documentserver_7.5.1-1_amd64.deb"
+ARG PACKAGE_BASEURL="http://image.hi-hufei.com/"
 
 ENV COMPANY_NAME=$COMPANY_NAME \
     PRODUCT_NAME=$PRODUCT_NAME \
@@ -91,20 +92,20 @@ RUN apt-get update && \
     apt-get install -y git-lfs && \
     git lfs install && \
     rm -rf /var/lib/apt/lists/*
-
-RUN    wget -q -P /tmp "http://image.hi-hufei.com/onlyoffice-documentserver_7.5.1-1_amd64.deb" && \
-       git clone "https://github.com/fernfei/DocumentServer-Fonts.git" /DocumentServer-Fonts && \
-       unzip /DocumentServer-Fonts/fonts.zip -d /usr/share/fonts/ && \
+RUN PACKAGE_FILE="${COMPANY_NAME}-${PRODUCT_NAME}_${PACKAGE_VERSION}-${PACKAGE_REVISION}_$(dpkg --print-architecture).deb" && \
+    wget -q -P /tmp "${PACKAGE_BASEURL}${PACKAGE_FILE}" && \
+    git clone "https://github.com/fernfei/DocumentServer-Fonts.git" /DocumentServer-Fonts && \
+    unzip /DocumentServer-Fonts/fonts.zip -d /usr/share/fonts/ && \
     apt-get -y update && \
     service postgresql start && \
-    apt-get -yq install /tmp/onlyoffice-documentserver_7.5.1-1_amd64.deb && \
+    apt-get -yq install /tmp/${PACKAGE_FILE} && \
     service postgresql stop && \
     chmod 755 /etc/init.d/supervisor && \
     sed "s/COMPANY_NAME/${COMPANY_NAME}/g" -i /etc/supervisor/conf.d/*.conf && \
     service supervisor stop && \
     chmod 755 /app/ds/*.sh && \
     rm -rf /DocumentServer-Fonts && \
-    rm -f /tmp/onlyoffice-documentserver_7.5.1-1_amd64.deb && \
+    rm -f /tmp/${PACKAGE_FILE} && \
     rm -rf /var/log/$COMPANY_NAME && \
     rm -rf /var/lib/apt/lists/*
 

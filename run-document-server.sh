@@ -526,7 +526,7 @@ done
 
 # change folder rights
 for i in ${LOG_DIR} ${LIB_DIR}; do
-  chown -R root:root "$i"
+  chown -R ds:ds "$i"
   chmod -R 755 "$i"
 done
 

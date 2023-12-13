@@ -526,7 +526,7 @@ done
 
 # change folder rights
 for i in ${LOG_DIR} ${LIB_DIR}; do
-  chown -R ds:ds "$i"
+  chown -R root:root "$i"
   chmod -R 755 "$i"
 done
 
@@ -566,7 +566,7 @@ if [ ${ONLYOFFICE_DATA_CONTAINER_HOST} = "localhost" ]; then
     update_rabbitmq_setting
   else
     # change rights for rabbitmq directory
-    chown -R rabbitmq:rabbitmq ${RABBITMQ_DATA}
+    chown -R root:root ${RABBITMQ_DATA}
     chmod -R go=rX,u=rwX ${RABBITMQ_DATA}
     if [ -f ${RABBITMQ_DATA}/.erlang.cookie ]; then
         chmod 400 ${RABBITMQ_DATA}/.erlang.cookie
@@ -582,7 +582,7 @@ if [ ${ONLYOFFICE_DATA_CONTAINER_HOST} = "localhost" ]; then
       update_redis_settings
     else
       # change rights for redis directory
-      chown -R redis:redis ${REDIS_DATA}
+      chown -R root:root ${REDIS_DATA}
       chmod -R 750 ${REDIS_DATA}
 
       LOCAL_SERVICES+=("redis-server")

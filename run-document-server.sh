@@ -551,7 +551,7 @@ if [ ${ONLYOFFICE_DATA_CONTAINER_HOST} = "localhost" ]; then
     create_db_tbl
   else
     # change rights for postgres directory
-    chown -R postgres:postgres ${PG_ROOT}
+    chown -R root:root ${PG_ROOT}
     chmod -R 700 ${PG_ROOT}
 
     # create new db if it isn't exist
